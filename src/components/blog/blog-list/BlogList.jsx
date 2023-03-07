@@ -1,18 +1,19 @@
 import React from "react";
 import { Col, Row, Card } from "react-bootstrap";
-
-import BlogItem from "../blog-item/BlogItem";
 import { useEffect, useState } from "react";
 
 const BlogList = (props) => {
 
-  const [blogpost, setBlogpost] = useState()
+  const [blogpost, setBlogpost] = useState([])
 
   const getBlogposts = async () => {
-    await fetch(process.env.REACT_APP.BE_URL)
-      .then(response => response.json())
-      .then(data => console.log("blogposts:", data))
-      .then(data => setBlogpost(data))
+    try {
+      let response = await fetch(process.env.REACT_APP_BE_URL + "/blogposts")
+      const data = await response.json()
+      setBlogpost(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -24,15 +25,19 @@ const BlogList = (props) => {
   return (
     <Row>
       {blogpost && blogpost.map((post) => {
-        return (<Card className="blog-card">
-          <Card.Img variant="top" src={post.coverURL} className="blog-cover" />
-          <Card.Body>
-            <Card.Title>{post.title}</Card.Title>
-          </Card.Body>
-          <Card.Footer>
-            <Card.Title>{post.author.name} </Card.Title>
-          </Card.Footer>
-        </Card>)
+        return (
+          <Col className="border p-3" xs={3} md={3} lg={3}>
+            <Card.Img variant="top" src={post.coverURL} className="blog-cover" />
+            <Card.Body>
+              <Card.Title>Title: {post.title}</Card.Title>
+            </Card.Body>
+            <Card.Footer>
+              <Card.Title>Author: {post.author.name} </Card.Title>
+            </Card.Footer>
+            <a onClick={e => e.stopPropagation} href={`${process.env.REACT_APP_BE_URL}/blogposts/${post.id}/pdf`}>
+              Download as pdf!
+            </a>
+          </Col>)
       })}
     </Row>
   );
