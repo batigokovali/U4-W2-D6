@@ -9,7 +9,7 @@ const BlogList = (props) => {
   const [blogpost, setBlogpost] = useState()
 
   const getBlogposts = async () => {
-    await fetch("https://u4-w1-d4-production.up.railway.app/blogposts")
+    await fetch(process.env.REACT_APP.BE_URL)
       .then(response => response.json())
       .then(data => console.log("blogposts:", data))
       .then(data => setBlogpost(data))
